@@ -50,7 +50,7 @@ namespace AssetManagementWebApplication.Controllers
 			await dbContext.SaveChangesAsync();
 			return Ok(user);
 		}
-		[HttpPut]
+		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateUserById(int id, UpdateUserDto updateUserDto)
 		{
 			var user = dbContext.Users.Find(id);
@@ -67,10 +67,9 @@ namespace AssetManagementWebApplication.Controllers
 
 			dbContext.Users.Update(user);
 			await dbContext.SaveChangesAsync();
-			dbContext.SaveChanges();
 			return Ok(user);
 		}
-		[HttpDelete]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteUserById(int id)
 		{
 			var user = dbContext.Users.Find(id);
@@ -80,7 +79,6 @@ namespace AssetManagementWebApplication.Controllers
 			}
 			dbContext.Users.Remove(user);
 			await dbContext.SaveChangesAsync();
-			dbContext.SaveChanges();
 			return Ok(user);
 		}
 	}

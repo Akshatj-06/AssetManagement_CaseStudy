@@ -36,8 +36,6 @@ namespace AssetManagementWebApplication.Controllers
 			dbContext.Assets.Add(newAsset);
 			await dbContext.SaveChangesAsync();
 
-
-
 			return Ok(newAsset);
 		}
 		[HttpGet("{id}")]
@@ -51,7 +49,7 @@ namespace AssetManagementWebApplication.Controllers
 			await dbContext.SaveChangesAsync();
 			return Ok(asset);
 		}
-		[HttpPut]
+		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateAssetById(int id, UpdateAssetDto updateAssetDto)
 		{
 			var asset = dbContext.Assets.Find(id);
@@ -68,10 +66,9 @@ namespace AssetManagementWebApplication.Controllers
 
 			dbContext.Assets.Update(asset);
 			await dbContext.SaveChangesAsync();
-			dbContext.SaveChanges();
 			return Ok(asset);
 		}
-		[HttpDelete]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteAssetById(int id)
 		{
 			var asset = dbContext.Assets.Find(id);
@@ -81,7 +78,6 @@ namespace AssetManagementWebApplication.Controllers
 			}
 			dbContext.Assets.Remove(asset);
 			await dbContext.SaveChangesAsync();
-			dbContext.SaveChanges();
 			return Ok(asset);
 		}
 
