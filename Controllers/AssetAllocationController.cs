@@ -1,5 +1,6 @@
 ﻿using AssetManagementWebApplication.Dto;
 using AssetManagementWebApplication.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,33 +21,35 @@ namespace AssetManagementWebApplication.Controllers
 			await dbContext.SaveChangesAsync();
 			return Ok(dbContext.AssetAllocations.ToList());
 		}
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public async Task<IActionResult> AddAssetAllocation(AddAssetAllocationDto addAssetAllocationDto)
 		{
-			var newAssetAllocation = new AssetAllocation
+			try
 			{
-				AssetId = addAssetAllocationDto.AssetId,
-				UserId = addAssetAllocationDto.UserId,
-				AllocationDate = addAssetAllocationDto.AllocationDate,
-				ReturnDate = addAssetAllocationDto.ReturnDate,
-				AllocationStatus = addAssetAllocationDto.AllocationStatus,
-			};
-			dbContext.AssetAllocations.Add(newAssetAllocation);
-			await dbContext.SaveChangesAsync();
+				var newAssetAllocation = new AssetAllocation
+				{
+					AssetId = addAssetAllocationDto.AssetId,
+					UserId = addAssetAllocationDto.UserId,
+					AllocationDate = addAssetAllocationDto.AllocationDate,
+					ReturnDate = addAssetAllocationDto.ReturnDate,
+					AllocationStatus = addAssetAllocationDto.AllocationStatus,
+				};
 
-			return Ok(newAssetAllocation);
-		}
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetAssetAllocationById(int id)
-		{
-			var assetAllocation = dbContext.AssetAllocations.Find(id);
-			if (assetAllocation == null)
-			{
-				return NotFound();
+				dbContext.AssetAllocations.Add(newAssetAllocation);
+				await dbContext.SaveChangesAsync();
+
+				return Ok(new { message = "Asset allocation added successfully!", assetAllocation = newAssetAllocation });
 			}
-			await dbContext.SaveChangesAsync();
-			return Ok(assetAllocation);
+			catch (Exception ex)
+			{
+				// Return the exception message to the user
+				return StatusCode(StatusCodes.Status500InternalServerError,
+								  new { message = "An error occurred while adding the asset allocation.", error = ex.Message });
+			}
 		}
+
+
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateAssetAllocationById(int id, UpdateAssetAllocationDto updateAssetAllocationDto)
 		{
